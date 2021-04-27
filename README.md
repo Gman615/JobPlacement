@@ -8,120 +8,120 @@ This document shows code snippets and a description of the live project done thr
 This section of code shows my views section from my Django Application with CRUD functionality, and an API.
 
     from django.shortcuts import render, redirect, get_object_or_404
-    from .forms import TVshowsForm<br>
-    from .models import TVshows<br>
-    from django.core.paginator import Paginator<br>
-    import requests<br>
+    from .forms import TVshowsForm
+    from .models import TVshows
+    from django.core.paginator import Paginator
+    import requests
 
 
 
-    *this renders the home page*<br>
-    def TVshow_home(request):<br>
-        return render(request, "TVshowAPP/home.html")<br>
+    *this renders the home page*
+    def TVshow_home(request):
+        return render(request, "TVshowAPP/home.html")
 
 
 
-    def addShow(request):<br>
-        *adds data to the database*<br>
-        form = TVshowsForm(request.POST or None)<br>
-        if form.is_valid():<br>
-            form.save()<br>
-            return redirect('TVshow_home')<br>
-        else:<br>
-            print(form.errors)<br>
-            form = TVshowsForm()<br>
-        context = {<br>
-            'form': form,<br>
-        }<br>
-        return render(request, 'TVshowAPP/AddTVShow.html', context)<br>
+    def addShow(request):
+        *adds data to the database*
+        form = TVshowsForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+            return redirect('TVshow_home')
+        else:
+            print(form.errors)
+            form = TVshowsForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'TVshowAPP/AddTVShow.html', context)
 
-    def seeShow(request):<br>
-        *gets all items from DB and returns info to table on TVshow_list*<br>
-        tvshow = TVshowsForm()<br>
-        tvshowdb = TVshows.objects.all()<br>
-        *creates pagination variables*<br>
-        page = Paginator(tvshowdb, 10)<br>
-        page_show = request.GET.get('page')<br>
-        page2 = page.get_page(page_show)<br>
-        context = {'tvshow': tvshow, 'tvshowdb': tvshowdb}<br>
-        return render(request, 'TVshowAPP/TVShow_List.html', {'page2': page2}, context)<br>
+    def seeShow(request):
+        *gets all items from DB and returns info to table on TVshow_list*
+        tvshow = TVshowsForm()
+        tvshowdb = TVshows.objects.all()
+        *creates pagination variables*
+        page = Paginator(tvshowdb, 10)
+        page_show = request.GET.get('page')
+        page2 = page.get_page(page_show)
+        context = {'tvshow': tvshow, 'tvshowdb': tvshowdb}
+        return render(request, 'TVshowAPP/TVShow_List.html', {'page2': page2}, context)
 
 
 
-    def showDetails(request, pk):<br>
-         *this function locates the pk for each database entry, sends the info to the details page*<br>
-        pk = int(pk)<br>
-        tvshow = get_object_or_404(TVshows, pk=pk)<br>
-        tvform = TVshowsForm(data=request.POST or None, instance=tvshow)<br>
-        if request.method == 'POST':<br>
-            if tvform.is_valid():<br>
-                tvform.save()<br>
-                return redirect('seeShow')<br>
-            else:<br>
-                print(tvform.errors)<br>
-        else:<br>
-            return render(request, 'TVshowAPP/TVshow_details.html', {'tvform': tvform})<br>
+    def showDetails(request, pk):
+         *this function locates the pk for each database entry, sends the info to the details page*
+        pk = int(pk)
+        tvshow = get_object_or_404(TVshows, pk=pk)
+        tvform = TVshowsForm(data=request.POST or None, instance=tvshow)
+        if request.method == 'POST':
+            if tvform.is_valid():
+                tvform.save()
+                return redirect('seeShow')
+            else:
+                print(tvform.errors)
+        else:
+            return render(request, 'TVshowAPP/TVshow_details.html', {'tvform': tvform})
 
-    def editShow(request, pk):<br>
-        *allows information to be edited from form for specific show, saves edit as well.*<br>    
-        pk = int(pk)<br>
-        tvshow = get_object_or_404(TVshows, pk=pk)<br>
-        tvform = TVshowsForm(data=request.POST or None, instance=tvshow)<br>
-        if request.method == 'POST':<br>
-            if tvform.is_valid():<br>
-                tvform.save()<br>
-                return redirect('seeShow')<br>
-            else:<br>
-                print(tvform.errors)<br>
-        else:<br>
-            return render(request, 'TVshowAPP/TVshow_edit.html', {'tvform': tvform})<br>
+    def editShow(request, pk):
+        *allows information to be edited from form for specific show, saves edit as well.*    
+        pk = int(pk)
+        tvshow = get_object_or_404(TVshows, pk=pk)
+        tvform = TVshowsForm(data=request.POST or None, instance=tvshow)
+        if request.method == 'POST':
+            if tvform.is_valid():
+                tvform.save()
+                return redirect('seeShow')
+            else:
+                print(tvform.errors)
+        else:
+            return render(request, 'TVshowAPP/TVshow_edit.html', {'tvform': tvform})
     
-    *function below begins the delete process, sends the user to a page that asks to confirm deletion*<br>
-    def deleteShow(request, pk):<br>
+    *function below begins the delete process, sends the user to a page that asks to confirm deletion*
+    def deleteShow(request, pk):
 
-        pk = int(pk)<br>
-        show = get_object_or_404(TVshows, pk=pk)<br>
-        if request.method == 'POST':<br>
-            show.delete()<br>
-            return redirect('seeShow')<br>
-        context = {'show': show}<br>
-        return render(request, 'TVshowAPP/TVshow_delete.html', context)<br>
+        pk = int(pk)
+        show = get_object_or_404(TVshows, pk=pk)
+        if request.method == 'POST':
+            show.delete()
+            return redirect('seeShow')
+        context = {'show': show}
+        return render(request, 'TVshowAPP/TVshow_delete.html', context)
 
-    *function below deletes added data once the user requests to do so*<br>
+    *function below deletes added data once the user requests to do so*
 
-    def confirmDelete(request):<br>
+    def confirmDelete(request):
 
-        if request.method == 'POST':<br>
-            tvform = TVshowsForm(request.POST or None)<br>
-            if tvform.is_valid():<br>
-                tvform.delete()<br>
-                return redirect('TVshow_home')<br>
-        else:<br>
-            return redirect('TVshowAPP/TVshow_List.html')<br>
+        if request.method == 'POST':
+            tvform = TVshowsForm(request.POST or None)
+            if tvform.is_valid():
+                tvform.delete()
+                return redirect('TVshow_home')
+        else:
+            return redirect('TVshowAPP/TVshow_List.html')
 
-    *the below functions help create the API with imdb that allows the user to search imdb and display results to the console*<br>
+    *the below functions help create the API with imdb that allows the user to search imdb and display results to the console*
 
-    def TVshow_api(request):<br>
+    def TVshow_api(request):
 
-        return render(request, 'TVshowAPP/TVshow_api.html')<br>
+        return render(request, 'TVshowAPP/TVshow_api.html')
 
-    def imdb(request):<br>
+    def imdb(request):
 
-        result = {}<br>
-        if 'title' in request.GET:<br>
-            title = request.GET['title']<br><br>
+        result = {}
+        if 'title' in request.GET:
+            title = request.GET['title']
 
-            url = "https://movie-database-imdb-alternative.p.rapidapi.com/"<br><br>
+            url = "https://movie-database-imdb-alternative.p.rapidapi.com/"
 
-            querystring = {"s": title, "page": "1", "r": "json"}<br><br>
+            querystring = {"s": title, "page": "1", "r": "json"}
 
-            headers = {<br>
-                'x-rapidapi-key': "b5a6dc6914msh268617fe992e521p1e1e0cjsn6a2da41f88ba",<br>
-                'x-rapidapi-host': "movie-database-imdb-alternative.p.rapidapi.com"<br>
-            }<br><br>
+            headers = {
+                'x-rapidapi-key': "b5a6dc6914msh268617fe992e521p1e1e0cjsn6a2da41f88ba",
+                'x-rapidapi-host': "movie-database-imdb-alternative.p.rapidapi.com"
+            }
 
-            response = requests.request("GET", url, headers=headers, params=querystring)<br><br>
+            response = requests.request("GET", url, headers=headers, params=querystring)
 
-            print(response.text)<br>
-            print("test")<br>
-        return render(request, 'TVshowAPP/TVshow_api.html', {'result': result})<br>
+            print(response.text)
+            print("test")
+        return render(request, 'TVshowAPP/TVshow_api.html', {'result': result})
