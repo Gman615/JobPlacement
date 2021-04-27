@@ -7,7 +7,7 @@ This document shows code snippets and a description of the live project done thr
 
 This section of code shows my views section from my Django Application with CRUD functionality, and an API.
 
-    from django.shortcuts import render, redirect, get_object_or_404<br>
+    from django.shortcuts import render, redirect, get_object_or_404
     from .forms import TVshowsForm<br>
     from .models import TVshows<br>
     from django.core.paginator import Paginator<br>
